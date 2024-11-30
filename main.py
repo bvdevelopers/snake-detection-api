@@ -7,6 +7,9 @@ import numpy as np
 
 app = Flask(__name__)
 model = load_model("snake_species_classifier.h5")
+@app.route('/')
+def home():
+    return "Welcome to the Snake Detection App!"
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -38,3 +41,6 @@ def predict():
 
 if __name__ == "__main__":
     app.run(debug=True)
+import os
+port = int(os.environ.get('PORT', 5000))
+app.run(host='0.0.0.0', port=port)
