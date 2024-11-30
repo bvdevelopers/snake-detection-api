@@ -20,6 +20,21 @@ def predict():
 
     predictions = model.predict(image)
     predicted_class = np.argmax(predictions)
+    venomous_map = {
+    "banded racer": "Non-Venomous",
+    "checkered keelback": "Non-Venomous",
+    "common rat snake": "Non-Venomous",
+    "Common Sand Boa": "Non-Venomous",
+    "Common Trinket": "Non-Venomous",
+    "Indian Rock Python": "Non-Venomous",
+    "Green Tree Vine": "Non-Venomous",
+    "common krait": "Venomous",
+    "king cobra": "Venomous",
+    "Monocled Cobra": "Venomous",
+    "Russell's Viper": "Venomous",
+    "Saw-scaled Viper": "Venomous",
+    "Spectacled Cobra": "Venomous",
+    }
     class_labels = [
         "banded racer",
         "checkered keelback",
@@ -36,8 +51,8 @@ def predict():
         "Spectacled Cobra"
     ]
     predicted_species = class_labels[predicted_class]
-
-    return jsonify({'species': predicted_species})
+    venom_status = venomous_map[predicted_species]
+    return jsonify({'species': predicted_species, 'status':venom_status})
 
 if __name__ == "__main__":
     app.run(debug=True)
