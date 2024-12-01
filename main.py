@@ -61,9 +61,15 @@ def predict():
     venom_status = venomous_map[predicted_species]
     logging.debug(f"species: {predicted_species}, status:{venom_status}")
     if predicted_species and venom_status:
-        return jsonify({'species': predicted_species, 'status':venom_status})
+        response = jsonify({'species': predicted_species, 'status': venom_status})
+        response.headers['Content-Type'] = 'application/json'
+        logging.debug(f"Response: {response.get_json()}")
+        return response
     else:
-        return jsonify({'species': 'unknown species', 'status':'NA'})
+        response = jsonify({'species': 'unknown species', 'status': 'NA'})
+        response.headers['Content-Type'] = 'application/json'
+        logging.debug(f"Response: {response.get_json()}")
+        return response
 
 if __name__ == "__main__":
     app.run(debug=True)
