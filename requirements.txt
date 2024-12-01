@@ -3,3 +3,4 @@ tensorflow-cpu
 numpy
 Pillow
 gunicorn==21.2.0
+flask_cors
