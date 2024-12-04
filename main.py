@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 # Load the model
-model = load_model("snake_species_classifier.h5")
+model = load_model("snake_species_classifier2.h5")
 
 @app.route('/')
 def home():
