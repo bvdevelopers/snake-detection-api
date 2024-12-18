@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 # Load TFLite model
-interpreter = tf.lite.Interpreter(model_path="snake_species_classifier.tflite")
+interpreter = tf.lite.Interpreter(model_path="snake_species_classifier2.tflite")
 interpreter.allocate_tensors()
 
 # Get input and output details
