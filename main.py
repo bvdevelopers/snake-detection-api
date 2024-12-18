@@ -1,12 +1,10 @@
 from flask import Flask, request, jsonify
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
-from io import BytesIO
 from flask_cors import CORS
-import logging
 import numpy as np
 from PIL import Image
-from werkzeug.utils import secure_filename
+from io import BytesIO
+import tensorflow as tf
+import logging
 import os
 
 # Set up Flask app and CORS
@@ -17,8 +15,13 @@ logging.basicConfig(level=logging.DEBUG)
 # Set maximum allowed size to 2 MB (example)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
-# Load the model
-model = load_model("snake_species_classifier2.h5")
+# Load TFLite model
+interpreter = tf.lite.Interpreter(model_path="snake_species_classifier.tflite")
+interpreter.allocate_tensors()
+
+# Get input and output details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 @app.route('/')
 def home():
@@ -41,16 +44,24 @@ def predict():
 
     try:
         logging.debug(f"File received: {file.filename}, content_type={file.content_type}")
-        # Open and resize image
+        # Open and preprocess image
         image = Image.open(BytesIO(file.read())).convert("RGB")
-        image = image.resize((128, 128))
-        image = img_to_array(image) / 255.0
-        image = np.expand_dims(image, axis=0)
+        image = image.resize((128, 128))  # Resize to match model input
+        image_array = np.array(image, dtype=np.float32) / 255.0  # Normalize pixel values
+        image_array = np.expand_dims(image_array, axis=0)  # Add batch dimension
 
-        predictions = model.predict(image)
+        # Set the input tensor
+        interpreter.set_tensor(input_details[0]['index'], image_array)
+
+        # Run inference
+        interpreter.invoke()
+
+        # Get the output tensor
+        predictions = interpreter.get_tensor(output_details[0]['index'])
         logging.debug(f"Predictions: {predictions}")
         predicted_class = np.argmax(predictions)
 
+        # Map predictions to class labels
         venomous_map = {
             "banded racer": "Non-Venomous",
             "checkered keelback": "Non-Venomous",
